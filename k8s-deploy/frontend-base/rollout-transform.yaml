@@ -1,0 +1,21 @@
+nameReference:
+- kind: Service
+  version: v1
+  fieldSpecs:
+  - path: spec/defaultBackend/service/name
+    kind: Ingress
+  - path: spec/rules/http/paths/backend/service/name
+    kind: Ingress
+
+commonLabels:
+- path: metadata/labels
+  create: true
+
+- path: spec/selector
+  create: true
+  version: v1
+  kind: Service
+
+- path: spec/selector/matchLabels
+  create: true
+  kind: Deployment

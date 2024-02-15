@@ -1,0 +1,54 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-service
+  namespace: blog-app
+spec:
+  selector:
+    app: backend
+  ports:
+  - protocol: TCP
+    port: 4001
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-deployment
+  namespace: blog-app
+spec:
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+      - name: backend
+        image: backend
+        ports:
+        - containerPort: 4001
+        env:
+        - name: MONGO_URI
+          valueFrom:
+            secretKeyRef:
+              name: mongo-credentials
+              key: uri
+        - name: MONGOOSE_URI
+          valueFrom:
+            secretKeyRef:
+              name: mongo-credentials
+              key: uri
+        # Other environment variables as needed
+      - name: vault-sidecar
+        image: vault:latest
+        env:
+        - name: VAULT_ADDR
+          value: http://vault-server:8200
+          
+      volumes:
+      - name: mongo-credentials
+        secret:
+          secretName: mongo-credentials
