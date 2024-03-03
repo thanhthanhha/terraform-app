@@ -14,8 +14,11 @@ terraform {
 
 data "aws_availability_zones" "available" {}
 
-data "aws_subnet_ids" "personal_vpc_subnets" {
-  vpc_id = var.vpc_id 
+data "aws_subnets" "subnets" {
+  filter {
+    name   = "vpc-id"
+    values = [var.vpc_id]
+  }
 }
 
 data "aws_ami" "amazon_linux_23" {
@@ -69,10 +72,10 @@ module "ec2_complete" {
 
   name = local.name
 
-  ami                         = data.aws_ami.amazon_linux.id
+  ami                         = data.aws_ami.amazon_linux_23.id
   instance_type               = "t2.micro" # used to set core count below
-  availability_zone           = element(ddata.aws_availability_zones.available.names, 0)
-  subnet_id                   = element(data.aws_subnet_ids.personal_vpc_subnets.ids, 0)
+  availability_zone           = element(data.aws_availability_zones.available.names, 0)
+  subnet_id                   = element(data.aws_subnets.subnets.ids, 0)
   vpc_security_group_ids      = [module.security_group.security_group_id]
   associate_public_ip_address = true
   disable_api_stop            = false
