@@ -12,6 +12,41 @@ terraform {
   }
 }
 
+data "aws_availability_zones" "available" {}
+
+data "aws_subnet_ids" "personal_vpc_subnets" {
+  vpc_id = var.vpc_id 
+}
+
+data "aws_ami" "amazon_linux_23" {
+  most_recent = true
+  owners      = ["amazon"]
+
+  filter {
+    name   = "name"
+    values = ["al2023-ami-2023*-x86_64"]
+  }
+}
+
+data "aws_vpc" "personal_vpc" {
+  id = var.vpc_id 
+}
+
+module "security_group" {
+  source  = "../../../terraform-modules/modules-base/security/security-group/"
+
+  name        = local.name
+  description = "Security group for example usage with EC2 instance"
+  vpc_id      = var.vpc_id
+
+  ingress_cidr_blocks = ["0.0.0.0/0"]
+  ingress_rules       = ["http-80-tcp", "all-icmp"]
+  egress_rules        = ["all-all"]
+
+  tags = local.tags
+}
+
+
 locals {
   name   = "ex-${basename(path.cwd)}"
 
@@ -36,8 +71,8 @@ module "ec2_complete" {
 
   ami                         = data.aws_ami.amazon_linux.id
   instance_type               = "t2.micro" # used to set core count below
-  availability_zone           = element(data.aws_vpc.personal_vpc.azs, 0)
-  subnet_id                   = element(data.aws_vpc.personal_vpc.private_subnets, 0)
+  availability_zone           = element(ddata.aws_availability_zones.available.names, 0)
+  subnet_id                   = element(data.aws_subnet_ids.personal_vpc_subnets.ids, 0)
   vpc_security_group_ids      = [module.security_group.security_group_id]
   associate_public_ip_address = true
   disable_api_stop            = false
@@ -88,30 +123,3 @@ module "ec2_complete" {
 
 ##############Template data################
 
-data "aws_ami" "amazon_linux_23" {
-  most_recent = true
-  owners      = ["amazon"]
-
-  filter {
-    name   = "name"
-    values = ["al2023-ami-2023*-x86_64"]
-  }
-}
-
-data "aws_vpc" "personal_vpc" {
-  id = var.vpc_id 
-}
-
-module "security_group" {
-  source  = "../../../terraform-modules/modules-base/security/security-group/"
-
-  name        = local.name
-  description = "Security group for example usage with EC2 instance"
-  vpc_id      = var.vpc_id
-
-  ingress_cidr_blocks = ["0.0.0.0/0"]
-  ingress_rules       = ["http-80-tcp", "all-icmp"]
-  egress_rules        = ["all-all"]
-
-  tags = local.tags
-}
