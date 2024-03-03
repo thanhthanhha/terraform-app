@@ -8,7 +8,7 @@ terraform {
     key            = "tfvars/build/vpc/terraform.tfstate"    # Set the desired path for your state file
     region         = "ap-southeast-1"                         # Set your desired AWS region
     encrypt        = true                                # Optional: Set to true to enable server-side encryption
-    dynamodb_table = "terraform-table"              # Optional: Specify a DynamoDB table for state locking
+    dynamodb_table = "terraform-test"              # Optional: Specify a DynamoDB table for state locking
   }
 }
 
