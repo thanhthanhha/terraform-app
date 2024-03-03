@@ -91,11 +91,7 @@ module "ec2_complete" {
 
   user_data_base64            = base64encode(local.user_data)
   user_data_replace_on_change = true
-
-  cpu_options = {
-    core_count       = 1
-    threads_per_core = 1
-  }
+  
   enable_volume_tags = false
   root_block_device = [
     {
