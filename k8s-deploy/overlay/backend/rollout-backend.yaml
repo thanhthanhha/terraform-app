@@ -1,1 +1,48 @@
 apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: backend-rollout
+spec:
+  strategy:
+    blueGreen:
+      activeService: active
+      previewService: green
+      autoPromotionEnabled: true
+  replicas: 1 # Specify the desired number of replicas
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    topologySpreadConstraints:
+      - maxSkew: 1
+        topologyKey: topology.kubernetes.io/zone
+        whenUnspecified: DoNotSchedule
+        labelSelector:
+          app: backend
+    spec:
+      containers:
+      - name: backend
+        image: backend
+        ports:
+        - containerPort: 4001
+        env:
+        - name: MONGO_URI
+          valueFrom:
+            secretKeyRef:
+              name: mongo-credentials
+              key: uri
+        - name: MONGOOSE_URI
+          valueFrom:
+            secretKeyRef:
+              name: mongo-credentials
+              key: uri
+        # Other environment variables as needed
+    
+          
+      volumes:
+      - name: mongo-credentials
+        secret:
+          secretName: mongo-credentials
