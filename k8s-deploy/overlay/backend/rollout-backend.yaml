@@ -8,7 +8,7 @@ spec:
       activeService: active
       previewService: green
       autoPromotionEnabled: true
-  replicas: 1 # Specify the desired number of replicas
+  replicas: 1 # kustomize
   selector:
     matchLabels:
       app: backend
@@ -24,21 +24,14 @@ spec:
           app: backend
     spec:
       containers:
-      - name: backend
-        image: backend
+      - name: main
+        image: image #kustomize
         ports:
         - containerPort: 4001
-        env:
-        - name: MONGO_URI
-          valueFrom:
-            secretKeyRef:
-              name: mongo-credentials
-              key: uri
-        - name: MONGOOSE_URI
-          valueFrom:
-            secretKeyRef:
-              name: mongo-credentials
-              key: uri
+        envFrom:
+        - configMapRef:
+            name: cm #kustomize
+        - 
         # Other environment variables as needed
     
           
