@@ -35,6 +35,12 @@ vars:
   - name: ZBX_IMAGE_TAG
     objref: { kind: ConfigMap, name: backend-img-env, apiVersion: v1 }
     fieldref: {fieldpath: data.ZBX_IMAGE_TAG }
+  - name: REDIS_IMAGE_NAME
+    objref: { kind: ConfigMap, name: backend-img-env, apiVersion: v1 }
+    fieldref: {fieldpath: data.ZBX_IMAGE_NAME }
+  - name: REDIS_IMAGE_TAG
+    objref: { kind: ConfigMap, name: backend-img-env, apiVersion: v1 }
+    fieldref: {fieldpath: data.ZBX_IMAGE_TAG }
 
 patchesJson5902:
 
@@ -97,3 +103,6 @@ image:
   -name: zabbix-image
     newName: $(ZBX_IMAGE_NAME)
     newTag: $(ZBX_IMAGE_TAG)
+  -name: redis-image
+    newName: $(REDIS_IMAGE_NAME)
+    newTag: $(REDIS_IMAGE_TAG)

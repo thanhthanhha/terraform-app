@@ -84,6 +84,17 @@ spec:
         - name : backend-pv
           mountPath: /app/uploads
       
+      - name: redis
+        image: redis-image
+        imagePullPolicy: Always
+        resources:
+          requests:
+            memory: "100Mi"
+            cpu: "80m"
+          limites:
+            memory: "100Mi"
+            cpu: "80m"
+      
       # - name: zabbix-agentd
       #   image: zabbix-image
       #   imagePullPolicy: Always
