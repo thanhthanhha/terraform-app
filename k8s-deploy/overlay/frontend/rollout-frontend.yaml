@@ -11,18 +11,18 @@ spec:
   replicas: 1 # kustomize
   selector:
     matchLabels:
-      app: backend
+      app: frontend
   template:
     metadata:
       labels:
-        app: backend
+        app: frontend
     spec:
       topologySpreadConstraints:
         - maxSkew: 1
           topologyKey: topology.kubernetes.io/zone
           whenUnspecified: DoNotSchedule
           labelSelector:
-            app: backend
+            app: frontend
       containers:
       - name: main
         image: image          #kustomize
@@ -62,8 +62,6 @@ spec:
         envFrom:
         - configMapRef:
             name: cm            #kustomize
-        - secretRef:
-            name: db-secret     #kustomize
         env:
         - name: POD_NAME
           valueFrom:
@@ -81,9 +79,9 @@ spec:
         volumeMounts:
         - name : logs-pv
           mountPath: /data/logs
-        - name : backend-pv
-          mountPath: /app/uploads
-      
+        - name : frontend-pv
+          mountPath: /app/public
+
       - name: zabbix-agentd
         image: zabbix-image
         imagePullPolicy: Always
@@ -104,9 +102,9 @@ spec:
       - name: logs-pv
         persistentVolumeClaim:
           claimName: logs-pvc
-      - name: backend-pv
+      - name: frontend-pv
         persistentVolumeClaim:
-          claimName: backend-pvc
+          claimName: frontend-pvc
       - name: zabbix-agent-cm
         configMap:
           name: zabbix-agent-cm

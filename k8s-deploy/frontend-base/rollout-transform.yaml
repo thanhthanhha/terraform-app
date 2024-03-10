@@ -6,6 +6,21 @@ nameReference:
     kind: Ingress
   - path: spec/rules/http/paths/backend/service/name
     kind: Ingress
+- kind: ConfigMap
+  version: v1
+  fieldSpecs:
+  - path: spec/template/spec/containers/envFrom/configMapRef/name
+    kind: Rollout
+  - path: spec/template/spec/containers/env/valueFrom/configMapKeyRef/name
+    kind: Rollout
+  - path: spec/template/spec/volumes/configMap/name
+    kind: Rollout
+- kind: Secret
+  version: v1
+  fieldSpecs:
+  - path: spec/template/spec/containers/envFrom/secretRef/name
+    kind: Rollout
+
 
 commonLabels:
 - path: metadata/labels
