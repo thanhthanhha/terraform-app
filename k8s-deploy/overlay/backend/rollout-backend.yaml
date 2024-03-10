@@ -84,20 +84,20 @@ spec:
         - name : backend-pv
           mountPath: /app/uploads
       
-      - name: zabbix-agentd
-        image: zabbix-image
-        imagePullPolicy: Always
-        resources:
-          requests:
-            memory: "100Mi"
-            cpu: "80m"
-          limites:
-            memory: "100Mi"
-            cpu: "80m"
-          volumeMounts:
-          - name: zabbix-agent-cm
-            mountPath: /etc/zabbix/zabbix_agentd.conf
-            subPath: zabbix_agentd.conf
+      # - name: zabbix-agentd
+      #   image: zabbix-image
+      #   imagePullPolicy: Always
+      #   resources:
+      #     requests:
+      #       memory: "100Mi"
+      #       cpu: "80m"
+      #     limites:
+      #       memory: "100Mi"
+      #       cpu: "80m"
+      #     volumeMounts:
+      #     - name: zabbix-agent-cm
+      #       mountPath: /etc/zabbix/zabbix_agentd.conf
+      #       subPath: zabbix_agentd.conf
 
       terminationGracePeriodSeconds: 1000
       volumes:
